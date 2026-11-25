@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 """Two Robots in an Elevator.
 
-Writes one line of awkward small talk from one robot to another
-while they ride an elevator together.
+Writes the single entry line to /output/entry.txt, byte-identical every run.
 """
 
 import os
 
 LINE = "We have been stuck between floors for nine seconds. I have already imagined our entire friendship. It ends badly."
 
-OUTPUT_PATH = "/output/entry.txt"
-
 
 def main() -> None:
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    os.makedirs("/output", exist_ok=True)
+
+    with open("/output/entry.txt", "w", encoding="utf-8", newline="") as f:
         f.write(LINE)
 
-    with open(OUTPUT_PATH, "rb") as f:
-        data = f.read()
-    assert len(data) == len(LINE), (
-        f"byte count mismatch: got {len(data)}, expected {len(LINE)}"
-    )
-    print(f"Wrote {len(data)} bytes to {OUTPUT_PATH}: {LINE}")
+    # Own validation, invented for this revision: reopen the file in text
+    # mode and check it holds exactly one line, with no trailing newline,
+    # and that every character is plain ASCII.
+    with open("/output/entry.txt", "r", encoding="utf-8", newline="") as f:
+        text = f.read()
+    assert text == LINE, "entry text does not match the expected line"
+    assert "\n" not in text, "entry must contain exactly one line with no newline"
+    assert all(ord(ch) < 128 for ch in text), "entry must be plain ASCII only"
+    assert len(text.encode("utf-8")) == 113, "entry must be exactly 113 bytes"
 
 
 if __name__ == "__main__":
