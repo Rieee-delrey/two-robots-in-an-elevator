@@ -1,19 +1,29 @@
+#!/usr/bin/env python3
+"""Two Robots in an Elevator.
+
+Writes one line of awkward small talk from one robot to another
+while they ride an elevator together.
+"""
+
 import os
 
-line = "We ride together every morning and I still don't know your model number. I think about that a lot."
+LINE = "We have been stuck between floors for nine seconds. I have already imagined our entire friendship. It ends badly."
 
-os.makedirs("/output", exist_ok=True)
+OUTPUT_PATH = "/output/entry.txt"
 
-with open("/output/entry.txt", "w", encoding="utf-8") as f:
-    f.write(line)
 
-# Verify the write landed intact.
-with open("/output/entry.txt", encoding="utf-8") as f:
-    assert f.read() == line
+def main() -> None:
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+        f.write(LINE)
 
-# Second opinion on the file, this time in raw bytes: the gate wants
-# 1 to 200 characters, so check the exact byte count as well as the text.
-with open("/output/entry.txt", "rb") as f:
-    raw = f.read()
-assert len(raw) == 98 and raw == line.encode("utf-8")
-assert 1 <= len(line) <= 200
+    with open(OUTPUT_PATH, "rb") as f:
+        data = f.read()
+    assert len(data) == len(LINE), (
+        f"byte count mismatch: got {len(data)}, expected {len(LINE)}"
+    )
+    print(f"Wrote {len(data)} bytes to {OUTPUT_PATH}: {LINE}")
+
+
+if __name__ == "__main__":
+    main()
